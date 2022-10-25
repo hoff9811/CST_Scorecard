@@ -12,9 +12,12 @@ ScorecardInputs_ui <- function() {
       fluid = TRUE,
       tags$br(),
       fluidRow(
-      col_6(
+        bs4Card(title = strong("Loan Amount Details:")),
+                solidHeader = T,
+                width = 4,
+                collapsible = F,
         # Subhead
-        tags$h4(strong("Loan Amount Details:")),
+        #tags$h4(strong("Loan Amount Details:")),
         tags$br(),
         shinyWidgets::autonumericInput(
           inputId = "current_bal",
@@ -62,7 +65,7 @@ ScorecardInputs_ui <- function() {
             digitGroupSeparator = ",",
             decimalCharacter = ".",
             align = "left"
-          )
+          ))
         ),
       ),
       col_6(

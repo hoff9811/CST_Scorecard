@@ -84,7 +84,7 @@ CalcDefaultThresholds <- function(prop_val,
 
 
 Commercial_default <- function(sim_ratios,
-                               default_triggers,
+                               default_thresholds,
                                loan_life) 
 {
   num_sim <- nrow(sim_ratios)

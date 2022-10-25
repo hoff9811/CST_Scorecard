@@ -139,13 +139,13 @@ plotSimRatios <- function(sim_ratios, input, default_thresholds) {
 
 # Simulation Plots
 
-FudgeSimulations <- function(input_val, loan_term, avg, vol) {
+FudgeSimulations <- function(input_val, loan_term, loan_life, avg, vol) {
   #inputs
   prop_val_input = input_val
   date_start = as.Date(loan_term[1])
   date_end = as.Date(loan_term[2])
   
-  loan_life = getLoanLife(input$loan_term, input$assessment_date) /12
+  loan_life = loan_life / 12
   num_years = ceiling(loan_life)
   remainder = loan_life - floor(loan_life)
   num_sim = 500

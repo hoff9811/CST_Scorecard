@@ -13,6 +13,8 @@ library(tidyverse)
 library(plotly)
 library(bs4Dash)
 library(shinyLP)
+library(fresh)
+library(lubridate)
 
 source("CST_welcome_page.R")
 source("CST_Parameters.R")
@@ -21,6 +23,7 @@ source("CST_Commercial.R")
 source("CST_Output.R")
 source("CST_ScorecardInputs.R")
 source("CST_Dashboard.R")
+source("CST_AboutUs.R")
 
 
 default_triggers <- rbind(rep(1, 10), rep(1, 10))
@@ -51,15 +54,15 @@ app_ui <- function() {
       header = bs4DashNavbar(
         title = NULL,
         skin = "light",
-        status = "lightblue"
+        status = "grey"
       ),
       
       # left sidebar
       sidebar = bs4DashSidebar(
         skin = "light",
-        status = "lightblue",
+        status = "grey",
         title = "Risk Rating",
-        #brandColor = "lightblue",
+        #brandColor = "grey",
         #elevation = 3,
         #opacity = 0.8,
         
@@ -209,7 +212,7 @@ server <- function(input, output, session) {
     incProgress(1/n, detail = paste("Doing part", 7))
     
     f_prop_val_sim <- 
-      FudgeSimulations(input$prop_val, input$loan_term, 0.045, 0.1) %>% 
+      FudgeSimulations(input$prop_val, input$loan_term, v$loan_life, 0.045, 0.1) %>% 
       SimulationPlot() +
       labs(y = "Simulated Property Values") +
       geom_line(color = "light blue",   size = 0.2, alpha = 0.7) +
@@ -220,7 +223,7 @@ server <- function(input, output, session) {
     incProgress(1/n, detail = paste("Doing part", 8))
     
     f_const_cost_sim <- 
-      FudgeSimulations(input$const_cost, input$loan_term, 0.045, 0.06) %>% 
+      FudgeSimulations(input$const_cost, input$loan_term, v$loan_life, 0.045, 0.06) %>% 
       SimulationPlot() +
       labs(y = "Simulated Construction Costs") +
       geom_line(color = "light green", size = 0.2, alpha = 0.7) +

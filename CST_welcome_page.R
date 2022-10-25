@@ -12,7 +12,7 @@ mod_welcome_ui <- function(){
       lead = "This is a Shiny application that rates Construction & Development loans using a simulation-based model. The scorecard simulates property value, construction costs, and interest rate over the life of the loan based on historical volatilities.", #The risk rating uses a threshold-appraoch, where the rating is assigned based on the number of simulations where the simulated values cross a threshold. Once a rating is generated, the simulation can be drilled into using the risk assessment dashboard. ",
       #skin = "dark",
       btnName = "App GitHub Repository",
-      href = "https://github.com/hoff9811/hoff9811.github.io"
+      href = "https://github.com/hoff9811/CST_Scorecard"
     ),
     fluidRow(
       col_6(

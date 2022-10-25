@@ -7,12 +7,13 @@ Dashboard_ui <- function() {
     bs4ValueBoxOutput("rating"),
     bs4ValueBoxOutput("pass_fail")
   ),
-  fluidRow(bs4Card(title = "Other info",
+  fluidRow(bs4Card(title = "Risk Rating Summary",
                                solidHeader = T,
                                width = 12,
                                height = "50%",
-                               collapsible = TRUE,
-                               style = "font-size: 70%;")
+                               collapsible = F,
+                   h4("Customer Name: Test")
+                   )
   ),
   
   tags$h4(strong("Risk Factor: Loan-to-Value")),

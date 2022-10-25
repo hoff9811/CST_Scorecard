@@ -2,9 +2,7 @@
 ##Parameter Functions##
 #######################
 
-getLoanLife   <- function(loan_term,
-                          assessment_date)
-{  #Loan Life
+getLoanLife   <- function(loan_term, assessment_date) {  #Loan Life
   maturity_date <- loan_term[2]
   loan_life <- seq(as.Date(assessment_date), as.Date(maturity_date),  by = "month")
   loan_life <- length(loan_life) -1 #counting the # of months (exclude current month)
