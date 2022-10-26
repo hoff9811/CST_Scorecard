@@ -24,6 +24,7 @@ source("CST_Output.R")
 source("CST_ScorecardInputs.R")
 source("CST_Dashboard.R")
 source("CST_AboutUs.R")
+source("GaugeOutput.R")
 
 
 default_triggers <- rbind(rep(1, 10), rep(1, 10))
@@ -231,7 +232,7 @@ server <- function(input, output, session) {
                  color = "dark green", size = 3) +
       coord_flip()
     
-
+    output$rating_guage <- rating_output[1]
     
     output$myValue <-
       renderPrint({
