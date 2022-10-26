@@ -86,7 +86,7 @@ plotSimValues <- function(sim_var, input) {
 plotSimRatios <- function(sim_ratios, input, default_thresholds) {
   # LTV
   ltv_default_threshold <- default_thresholds[1]
-  ctv_default_threshold <- default_thresholds[2]
+  ltc_default_threshold <- default_thresholds[2]
   p1 <-
     sim_ratios %>% 
     mutate(sim_LTV = scales::squish(sim_LTV, quantile(sim_LTV, c(0.001, 0.999)))) %>% 
@@ -110,15 +110,15 @@ plotSimRatios <- function(sim_ratios, input, default_thresholds) {
          ) + 
     labs(caption = paste0("Values are simulated over full life of loan: Maturity Date = ", input$loan_term[2]))
   
-  # CTV
+  # LTC
   p2 <- 
     sim_ratios %>% 
-    mutate(sim_CTV = scales::squish(sim_CTV, quantile(sim_CTV, c(0.001, 0.999)))) %>% 
-    ggplot(aes(x = sim_CTV)) +
+    mutate(sim_LTC = scales::squish(sim_LTC, quantile(sim_LTC, c(0.001, 0.999)))) %>% 
+    ggplot(aes(x = sim_LTC)) +
     geom_area(stat = "density", fill = "#001f3f", color = "grey40") +
    # geom_vline(xintercept = input$const_cost/ input$prop_val, color = "dark green", size = 1, linetype = "dashed") +
-    geom_vline(aes(xintercept = ctv_default_threshold), color = "#dc3545", size = 1.5) +
-    scale_x_continuous(name = paste0("Simulated Cost-to-Values"),
+    geom_vline(aes(xintercept = ltc_default_threshold), color = "#dc3545", size = 1.5) +
+    scale_x_continuous(name = paste0("Simulated Loan-to_Cost"),
                        labels = scales::percent) +
     theme_bw() +
     theme(axis.title.x = element_text(face = "bold", size = 9),

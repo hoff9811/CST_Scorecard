@@ -62,18 +62,18 @@ Dashboard_ui <- function() {
                  )
   ), # row
   
-  fluidRow(h4(strong("Risk Factor: Cost-to-Value"))),
-  h6(em("Construction Costs are simulated across the life of loan and divided by each scenario's simulated Property Value.
-                The scorecard compares the simulated CTVs to the default threshold, measuring the proportion of scenarios where the borrower enters default.")),
+  fluidRow(h4(strong("Risk Factor: Loan-to-Cost"))),
+  h6(em("Construction Costs are simulated across the life of loan and divided by the Loan Balance + Accrued Interest.
+                The scorecard compares the simulated LTCs to the default threshold, measuring the proportion of scenarios where the borrower enters default.")),
   
   
   fluidRow(
-    bs4Card(title = "Simulated CTVs",
+    bs4Card(title = "Simulated LTCs",
                         solidHeader = T,
                         width = 5,
                         height = "350px",
                         collapsible = TRUE,
-                        div(plotlyOutput("ctv_dist"))
+                        div(plotlyOutput("ltc_dist"))
                  ),
     bs4Card(title = "Simulated Construction Costs",
                         solidHeader = T,

@@ -30,7 +30,6 @@ Commercial_fixed <- function(ramp_up,
   adj_prop_val <- prop_val + adj_coll_val
   
   ####################
-  ####
   #### Commercial loop
   ####################
     
@@ -53,31 +52,31 @@ Commercial_fixed <- function(ramp_up,
   
   #Simulated Ratios
   sim_LTV <- sim_balance / prop_val_sim 
-  sim_CTV <- sim_var[,1] / prop_val_sim
+  sim_LTC <- sim_balance / sim_var[,1] 
   
-  sim_ratios <- data.frame(sim_LTV, sim_CTV, prop_val_sim, sim_balance)
+  sim_ratios <- data.frame(sim_LTV, sim_LTC, prop_val_sim, sim_balance)
  
   return(sim_ratios) 
   
 }
 
+#############
+## Default Thresholds
+#############
 CalcDefaultThresholds <- function(prop_val,
-                              add_coll_value,
-                              add_coll_flag,
+                              const_cost,
+                              tot_commitment,
                               equity,
                               default_triggers)  {
   #Default Triggers
   ltv_threshold <- default_triggers[1,1]
-  ctv_threshold <- default_triggers[1,2]
-  
-  #Adjust Property Value for additional collateral
-  adj_coll_val <- ifelse(add_coll_flag < 2, add_coll_value,0)
-  adj_prop_val <- prop_val + adj_coll_val
+  ltc_threshold <- default_triggers[1,2]
+
   
   #Calculates the CTV threshold.
-  ctv_threshold <- max(1, equity / adj_prop_val + 1)                            
-  
-  default_thresholds <- c(ltv_threshold, ctv_threshold)
+  ltc_threshold <- max(1, (equity + tot_commitment) / const_cost)
+
+  default_thresholds <- c(ltv_threshold, ltc_threshold)
   
   return(default_thresholds)
 }
@@ -91,14 +90,14 @@ Commercial_default <- function(sim_ratios,
   
   #Default Triggers
   ltv_threshold <- default_thresholds[1]
-  ctv_threshold <- default_thresholds[2]
-  
+  ltc_threshold <- default_thresholds[2]
+
   #Default Criteria #1: Prop Value is below Zero
   default_1 <- ifelse(sim_ratios$prop_val_sim <= 0, 1, 0)
   default_LTV <- ifelse(sim_ratios$sim_LTV > ltv_threshold, 1, 0)
-  default_CTV <- ifelse(sim_ratios$sim_CTV > ctv_threshold, 1, 0)
+  default_LTC <- ifelse(sim_ratios$sim_LTC > ltc_threshold, 1, 0)
   
-  default <- default_1 + default_LTV + default_CTV
+  default <- default_1 + default_LTV + default_LTC
   default[default>0] = 1
   default <- sum(default)
     

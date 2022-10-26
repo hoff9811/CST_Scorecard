@@ -52,6 +52,6 @@ input$index_rate<- 0.0028
 ##### Assumption Screen Inputs #######
 
 default_triggers <- rbind(rep(1,10), rep(1,10))
-param_input      <-  read.csv("CST_Scorecard//CST_Correlation_Matrix.csv", header = TRUE)
+param_input      <-  read.csv("CST_Correlation_Matrix.csv", header = TRUE)
 
 

@@ -190,11 +190,11 @@ server <- function(input, output, session) {
       v$loan_life
     )
     incProgress(1/n, detail = paste("Doing part", 4))
-    
+
     default_thresholds <- CalcDefaultThresholds(
       input$prop_val,
-      input$add_coll_value,
-      input$add_coll_type,
+      input$const_cost,
+      input$tot_commitment,
       input$equity,
       default_triggers)
 
@@ -248,13 +248,13 @@ server <- function(input, output, session) {
                  "Property Value at Completion:", 
                  "Estimated Cost of Construction:", 
                  "Current LTV:", 
-                 "Current CTV:"),
+                 "Current LTC:"),
              "User Input" := 
                c(scales::dollar(max(input$current_bal, input$tot_commitment)),
                  scales::dollar(input$prop_val),
                  scales::dollar(input$const_cost),
-                 scales::percent(max(input$current_bal, input$tot_commitment)/ input$prop_val),
-                 scales::percent(input$const_cost / input$prop_val)
+                 scales::percent(max(input$current_bal, input$tot_commitment) / input$prop_val),
+                 scales::percent(max(input$current_bal, input$tot_commitment) / input$const_cost)
                  )
       )
       
@@ -301,7 +301,7 @@ server <- function(input, output, session) {
       ggplotly(ratios_dist_plot[[1]], height = 300)
       })
       
-    output$ctv_dist <- renderPlotly({
+    output$ltc_dist <- renderPlotly({
       ggplotly(ratios_dist_plot[[2]], height = 300)
     })
     
