@@ -8,6 +8,7 @@
 #
 library(shiny)
 library(shinyWidgets)
+require(flexdashboard)
 library(shinydashboard)
 library(tidyverse)
 library(plotly)
@@ -42,9 +43,10 @@ param_input <- read.csv("CST_Correlation_Matrix.csv", header = TRUE)
 app_ui <- function() {
   theme <- create_theme(
     bs4dash_status(
-      primary = "#3c8dbc", secondary = "#D2D6DE"
+      primary = "#3c8dbc", secondary = "#D2D6DE", success = "#01ff70", warning = "#ff851b", danger = "#dc3545"
     )
   )
+
   tagList(
     bs4DashPage(
       freshTheme = theme,
@@ -60,12 +62,14 @@ app_ui <- function() {
       
       # left sidebar
       sidebar = bs4DashSidebar(
-        skin = "light",
+        skin = "dark",
         status = "grey",
         title = "Risk Rating",
-        #brandColor = "grey",
-        #elevation = 3,
-        #opacity = 0.8,
+        elevation = 4,
+        collapsed = FALSE,
+        minified = TRUE,
+        expandOnHover = TRUE,
+        fixed = TRUE,
         
         # left sidebar menu
         bs4SidebarMenu(id="tabs",
@@ -75,7 +79,7 @@ app_ui <- function() {
             icon = icon('globe')
           ),
           bs4SidebarMenuItem(
-            "Risk Rating Inputs",
+            "Calculate Risk Rating",
             icon = icon("keyboard"),
             tabName = "inputs"
           ),
@@ -136,8 +140,8 @@ app_ui <- function() {
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-  
-  v <- reactiveValues()
+    
+    v <- reactiveValues()
   
   observeEvent(input$AB, {
     withProgress(message = 'Making plot', value = 0, {
@@ -216,9 +220,9 @@ server <- function(input, output, session) {
       FudgeSimulations(input$prop_val, input$loan_term, v$loan_life, 0.045, 0.1) %>% 
       SimulationPlot() +
       labs(y = "Simulated Property Values") +
-      geom_line(color = "light blue",   size = 0.2, alpha = 0.7) +
+      geom_line(color = "#3c8dbc",   size = 0.2, alpha = 0.7) +
       geom_point(data = . %>% filter(date == min(date), sim_id == 1), 
-                 y = input$prop_val, color = "dark blue", size = 3) +
+                 y = input$prop_val, color = "#001f3f", size = 3) +
       coord_flip()
     
     incProgress(1/n, detail = paste("Doing part", 8))
@@ -227,49 +231,71 @@ server <- function(input, output, session) {
       FudgeSimulations(input$const_cost, input$loan_term, v$loan_life, 0.045, 0.06) %>% 
       SimulationPlot() +
       labs(y = "Simulated Construction Costs") +
-      geom_line(color = "light green", size = 0.2, alpha = 0.7) +
+      geom_line(color = "#001f3f", size = 0.2, alpha = 0.7) +
       geom_point(data = . %>% filter(date == min(date), sim_id == 1),
-                 color = "dark green", size = 3) +
+                 color = "#3c8dbc", size = 3) +
       coord_flip()
     
-    output$rating_guage <- rating_output[1]
+    # Summary Table values
+    output$customer_name = renderText({input$customer_name})
+    output$loan_officer = renderText({paste("Rating Assessment prepared for", input$loan_officer)})
+    output$assessment_date= renderText({paste("Assessment Date:", input$assessment_date)})
+
+  
+    output$summary_table <- renderUI({
+      table_data <-
+        tibble("Field" := 
+               c("Total Bank Commitment:",
+                 "Property Value at Completion:", 
+                 "Estimated Cost of Construction:", 
+                 "Current LTV:", 
+                 "Current CTV:"),
+             "User Input" := 
+               c(scales::dollar(input$tot_commitment),
+                 scales::dollar(input$prop_val),
+                 scales::dollar(input$const_cost),
+                 scales::percent(input$tot_commitment / input$prop_val),
+                 scales::percent(input$const_cost / input$prop_val)
+                 )
+      )
+      
+      bs4Table(
+        cardWrap = F,
+        striped = T,
+        table_data
+      )
+    })
+
+      
+      
     
-    output$myValue <-
-      renderPrint({
-        scales::percent(v$Final_PD, accuracy = 0.01)
+    # Rating Guage
+    output$rating_gauge <- 
+      flexdashboard::renderGauge({
+        flexdashboard::gauge(rating_output[1], min = 1, max = 15, 
+                             flexdashboard::gaugeSectors(
+                success = c(1, 10), warning = c(11, 13), danger = c(14, 15),
+                colors = c("#01ff70", "#ff851b", "#dc3545"))
+              )
       })
     
+    
+    
+    value_box_color = ifelse(rating_output[[2]] == "Pass", "lime", 
+                              ifelse(rating_output[[2]] == "Watch","orange", "danger"))
+    
+    
     output$model_score <- renderbs4ValueBox({
-      if(rating_output[[2]] == "Pass"){
-        bs4ValueBox(tags$h3(scales::percent(v$Final_PD, accuracy = 0.01)), 
-                    strong("Model Score"), icon = icon("calculator"), color = "lime")
-      } else {
-        bs4ValueBox(tags$h3(scales::percent(v$Final_PD, accuracy = 0.01)), 
-                    strong("Model Score"), icon = icon("calculator"), color = "orange")
-      }
-      
-     
+        bs4ValueBox(tags$h3(scales::percent(v$Final_PD, accuracy = 0.01)), strong("Model Score"), icon = icon("calculator"), color = value_box_color)
     })
     incProgress(1/n, detail = paste("Doing part", 9))
     
     output$rating <- renderbs4ValueBox({
-      if(rating_output[[2]] == "Pass"){
-        bs4ValueBox(tags$h3(rating_output[1]), 
-                    strong("Risk Rating"), icon = icon("chart-simple"), color = "lime")
-      } else {
-        bs4ValueBox(tags$h3(rating_output[1]), 
-                    strong("Risk Rating"), icon = icon("chart-simple"), color = "orange")
-      }
+        bs4ValueBox(tags$h3(rating_output[1]), strong("Risk Rating"), icon = icon("chart-simple"), color = value_box_color)
     })
     
     output$pass_fail <- renderbs4ValueBox({
-      if(rating_output[[2]] == "Pass"){
-        bs4ValueBox(tags$h3(rating_output[2]), 
-                    strong("OCC Rating"), icon = icon("pen"), color = "lime")
-      } else {
-        bs4ValueBox(tags$h3(rating_output[2]), 
-                    strong("OCC Rating"), icon = icon("pen"), color = "orange")
-      }
+        bs4ValueBox(tags$h3(rating_output[2]), strong("OCC Rating"), icon = icon("pen"), color = value_box_color)
     })
 
     output$ltv_dist <- renderPlotly({
@@ -306,7 +332,7 @@ server <- function(input, output, session) {
   observeEvent(input$AB, {
     # Create the risk assessment tab
     output$dashboard <- bs4Dash::renderMenu({
-      bs4SidebarMenuSubItem("Risk Assessment", tabName = "dashboard", icon = icon("chart-simple"))
+      bs4SidebarMenuItem("Risk Assessment", tabName = "dashboard", icon = icon("chart-simple"))
   })
 
   # Go to the risk assessment tab
