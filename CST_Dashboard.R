@@ -17,7 +17,7 @@ Dashboard_ui <- function() {
     bs4ValueBoxOutput("rating"),
     bs4ValueBoxOutput("pass_fail")
   ),
-  tags$h4(strong("Risk Rating Summary:")),
+  fluidRow(h4(strong("Risk Rating: Summary"))),
   
   fluidRow(
     bs4Card(title = "Customer Overview:",
@@ -39,8 +39,9 @@ Dashboard_ui <- function() {
                    )
                    )
   ),
-  
-  tags$h4(strong("Risk Factor: Loan-to-Value")),
+  fluidRow(h4(strong("Risk Factor: Loan-to-Value"))),
+  h6(em("Property Values are simulated across the life of loan and divided by the Loan Balance + Accrued Interest.
+                The scorecard compares the simulated LTVs to the default threshold, measuring the proportion of scenarios where the borrower enters default.")),
   
   fluidRow(
     bs4Card(title = "Simulated LTVs",
@@ -61,7 +62,10 @@ Dashboard_ui <- function() {
                  )
   ), # row
   
-  tags$h4(strong("Risk Factor: Cost-to-Value")),
+  fluidRow(h4(strong("Risk Factor: Cost-to-Value"))),
+  h6(em("Construction Costs are simulated across the life of loan and divided by each scenario's simulated Property Value.
+                The scorecard compares the simulated CTVs to the default threshold, measuring the proportion of scenarios where the borrower enters default.")),
+  
   
   fluidRow(
     bs4Card(title = "Simulated CTVs",
