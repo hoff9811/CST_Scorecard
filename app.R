@@ -25,7 +25,6 @@ source("CST_Output.R")
 source("CST_ScorecardInputs.R")
 source("CST_Dashboard.R")
 source("CST_AboutUs.R")
-source("GaugeOutput.R")
 
 
 default_triggers <- rbind(rep(1, 10), rep(1, 10))
@@ -251,10 +250,10 @@ server <- function(input, output, session) {
                  "Current LTV:", 
                  "Current CTV:"),
              "User Input" := 
-               c(scales::dollar(input$tot_commitment),
+               c(scales::dollar(max(input$current_bal, input$tot_commitment)),
                  scales::dollar(input$prop_val),
                  scales::dollar(input$const_cost),
-                 scales::percent(input$tot_commitment / input$prop_val),
+                 scales::percent(max(input$current_bal, input$tot_commitment)/ input$prop_val),
                  scales::percent(input$const_cost / input$prop_val)
                  )
       )
