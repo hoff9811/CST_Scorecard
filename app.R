@@ -273,7 +273,7 @@ server <- function(input, output, session) {
       flexdashboard::renderGauge({
         flexdashboard::gauge(rating_output[1], min = 1, max = 15, 
                              flexdashboard::gaugeSectors(
-                success = c(1, 10), warning = c(11, 13), danger = c(14, 15),
+                success = c(1, 10), warning = c(11, 12), danger = c(13, 15),
                 colors = c("#01ff70", "#ff851b", "#dc3545"))
               )
       })

@@ -118,7 +118,7 @@ plotSimRatios <- function(sim_ratios, input, default_thresholds) {
     geom_area(stat = "density", fill = "#001f3f", color = "grey40") +
    # geom_vline(xintercept = input$const_cost/ input$prop_val, color = "dark green", size = 1, linetype = "dashed") +
     geom_vline(aes(xintercept = ltc_default_threshold), color = "#dc3545", size = 1.5) +
-    scale_x_continuous(name = paste0("Simulated Loan-to_Cost"),
+    scale_x_continuous(name = paste0("Simulated Loan-to-Cost"),
                        labels = scales::percent) +
     theme_bw() +
     theme(axis.title.x = element_text(face = "bold", size = 9),

@@ -1,0 +1,13 @@
+name: CST_Scorecard
+title: CST_Scorecard
+username:
+account: hoff9811
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7431852
+bundleId: 6444412
+url: https://hoff9811.shinyapps.io/CST_Scorecard/
+when: 1666815886.7962
+lastSyncTime: 1666815886.7962
+asMultiple: FALSE
+asStatic: FALSE
