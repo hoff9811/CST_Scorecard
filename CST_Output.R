@@ -9,7 +9,7 @@ plotSimValues <- function(sim_var, input) {
     sim_var %>% 
     mutate(prop_val = scales::squish(prop_val, quantile(prop_val, c(0.001, 0.999)))) %>% 
     ggplot(aes(x = prop_val)) +
-    geom_area(stat = "density", fill = "#3c8dbc", color = "grey40", alpha = 0.3) +
+    geom_area(stat = "density", fill = "#3c8dbc", color = "grey40") +
     geom_vline(xintercept = input$prop_val, color = "midnight blue",  size = 1, linetype = "dashed") +
     scale_x_continuous(name = paste0("Simulated Property Values"),
                        labels = scales::dollar) +
@@ -33,8 +33,8 @@ plotSimValues <- function(sim_var, input) {
     sim_var %>% 
     mutate(const_cost = scales::squish(const_cost, quantile(const_cost, c(0.001, 0.999)))) %>% 
     ggplot(aes(x = const_cost)) +
-    geom_area(stat = "density", fill = "light green", color = "grey40", alpha = 0.3) +
-    geom_vline(xintercept = input$const_cost, color = "dark green",  size = 1, linetype = "dashed") +
+    geom_area(stat = "density", fill = "#001f3f", color = "grey40") +
+    geom_vline(xintercept = input$const_cost, color = "#3c8dbc",  size = 1, linetype = "dashed") +
     scale_x_continuous(name = paste0("Simulated Construction Costs"),
                        labels = scales::dollar) +
     theme_bw() +
@@ -59,7 +59,7 @@ plotSimValues <- function(sim_var, input) {
     mutate(index_rate = scales::squish(index_rate, quantile(index_rate, c(0.001, 0.99)))) %>% 
     ggplot(aes(x = index_rate)) +
     geom_area(stat = "density", fill = "pink", color = "grey40", alpha = 0.3) +
-    geom_vline(aes(xintercept = input$index_rate), color = "dark red",  size = 1, linetype = "dashed") +
+    geom_vline(aes(xintercept = input$index_rate), color = "#dc3545",  size = 1, linetype = "dashed") +
     scale_x_continuous(name = paste0("Simulated Interest Rates"),
                        labels = scales::percent) +
     theme_bw() +
@@ -85,13 +85,15 @@ plotSimValues <- function(sim_var, input) {
 # Ratios Plot
 plotSimRatios <- function(sim_ratios, input, default_thresholds) {
   # LTV
+  ltv_default_threshold <- default_thresholds[1]
+  ctv_default_threshold <- default_thresholds[2]
   p1 <-
     sim_ratios %>% 
     mutate(sim_LTV = scales::squish(sim_LTV, quantile(sim_LTV, c(0.001, 0.999)))) %>% 
     ggplot(aes(x = sim_LTV)) +
-    geom_area(stat = "density", fill = "#3c8dbc", color = "grey40", alpha = 0.5) +
+    geom_area(stat = "density", fill = "#3c8dbc", color = "grey40") +
    # geom_vline(xintercept = input$tot_commitment / input$prop_val, color = "midnight blue", size = 1, linetype = "dashed") +
-    geom_vline(xintercept = default_thresholds[1], color = "dark red", size = 1.5) +
+    geom_vline(aes(xintercept = ltv_default_threshold), color = "#dc3545", size = 1.5) +
     scale_x_continuous(name = paste0("Simulated Loan-to-Values"),
                        labels = scales::percent) +
     theme_bw() +
@@ -104,7 +106,8 @@ plotSimRatios <- function(sim_ratios, input, default_thresholds) {
           panel.border=element_blank(),
           #panel.grid.major=element_blank(),
           panel.grid.minor=element_blank(),
-          plot.background=element_blank()) + 
+          plot.background=element_blank()
+         ) + 
     labs(caption = paste0("Values are simulated over full life of loan: Maturity Date = ", input$loan_term[2]))
   
   # CTV
@@ -112,9 +115,9 @@ plotSimRatios <- function(sim_ratios, input, default_thresholds) {
     sim_ratios %>% 
     mutate(sim_CTV = scales::squish(sim_CTV, quantile(sim_CTV, c(0.001, 0.999)))) %>% 
     ggplot(aes(x = sim_CTV)) +
-    geom_area(stat = "density", fill = "light green", color = "grey40", alpha = 0.5) +
+    geom_area(stat = "density", fill = "#001f3f", color = "grey40") +
    # geom_vline(xintercept = input$const_cost/ input$prop_val, color = "dark green", size = 1, linetype = "dashed") +
-    geom_vline(xintercept = default_thresholds[2], color = "dark red", size = 1.5) +
+    geom_vline(aes(xintercept = ctv_default_threshold), color = "#dc3545", size = 1.5) +
     scale_x_continuous(name = paste0("Simulated Cost-to-Values"),
                        labels = scales::percent) +
     theme_bw() +
@@ -231,6 +234,4 @@ SimulationPlot <- function(df) {
   
   return(p1)  
 }
-
-
 
